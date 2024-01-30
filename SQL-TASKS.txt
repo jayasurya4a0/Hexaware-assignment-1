@@ -1,0 +1,219 @@
+-- TASK-1
+
+CREATE database SISDB;
+
+USE SISDB
+
+
+create table Students (student_id int(5) primary key, first_name varchar(20),
+last_name varchar(10),date_of_birth date,email varchar(50), 
+phone_number varchar(10));
+
+
+create table Teacher(teacher_id int(5) primary key, first_name varchar(20),
+last_name varchar(20), email varchar(50));
+
+
+create table Courses(course_id varchar(5) primary key, course_name varchar(50),
+credits int(5), 
+teacher_id int(5), 
+foreign key (teacher_id) references Teacher(teacher_id)
+);
+
+
+create table Enrollments(enrollment_id int(5) primary key, student_id int(5),
+course_id varchar(5),enrollment_date date,
+foreign key (student_id) references Students(student_id),
+foreign key (course_id) references Courses(course_id) );
+
+
+create table Payments(payment_id int(5) primary key, student_id int(5),amount int(8),
+payment_date date,
+foreign key (student_id) references Students(student_id));
+
+
+
+insert into Students (student_id,first_name,last_name,date_of_birth,email,phone_number)
+values
+(01,'sam','Arigela','2003-06-17','samuel12@gmail.com','9223455598'),
+(02,'Raj','Majeti','2004-09-12','raj12@gmail.com','9374455598'),
+(03,'sagar','majeti','2003-04-24','sagar@gmail.com','9223438628'),
+(04,'surya','baddarapu','2003-06-17','surya@gmail.com','9223455640'),
+(05,'mohan','kora','2004-11-03','mohan@gmail.com','7803455598'),
+(06,'john','muvva','2003-03-10','john@gmail.com','6304455598'),
+(07,'will','smith','2004-09-28','smith@gmail.com','9223477378'),
+(08,'gopal','marupu','2004-02-15','gopal@gmail.com','6407225598'),
+(09,'max','west','2003-06-17','max@gmail.com','751497598'),
+(10,'james','carter','2004-03-01','james@gmail.com','9583206598');
+
+
+insert into Teacher values(201,'jaya','anand','jaya@gmail.com'),
+(202,'raji','meda','raji@gmail.com'),
+(203,'kumari','kanchi','kumarii@gmail.com'),
+(204,'lakshmi','anand','lakshmi@gmail.com'),
+(205,'koteswari','koti','koteswari@gmail.com'),
+(206,'rajesh','majeyti','rajesh@gmail.com'),
+(207,'venu','golla','venu@gmail.com'),
+(208,'sandeep','mathamsetti','sandeep@gmail.com'),
+(209,'meghana','surampudi','meghana@gmail.com'),
+(210,'genny','cherpuri','genny@gmail.com');
+
+
+insert into Courses values
+('m1','mathematics_1',4,206),
+('env','environmental science',2,203),
+('chm','chemistry',3,201),
+('cp','C programming language',5,207),
+('stat','statistics',4,209),
+('stm','software testing methodologies',3,202),
+('cn','computer networks',3,204),
+('cplab','c programminh lab',4,205),
+('ds','data structures',3,208),
+('dslab','data structure lab',4,210);
+
+
+insert into Enrollments values
+(101,01,'m1','2024-01-04'),
+(102,01,'chm','2024-01-04'),
+(103,01,'cp','2024-01-04'),
+(104,01,'cplab','2024-01-04'),
+(105,04,'m1','2024-01-05'),
+(106,04,'stat','2024-01-05'),
+(107,04,'cn','2024-01-05'),
+(108,05,'env','2024-01-03'),
+(109,05,'ds','2024-01-03'),
+(110,05,'dslab','2024-01-03');
+
+insert into Payments values(301,01,45000,'2024-01-10'),
+(302,02,30000,'2024-01-03'),
+(303,03,32000,'2024-01-01'),
+(304,05,27000,'2024-01-05'),
+(305,02,25000,'2024-01-03'),
+(306,06,22000,'2024-01-10'),
+(307,07,35000,'2024-01-17'),
+(308,09,20000,'2024-01-17'),
+(309,08,21000,'2024-01-17'),
+(310,10,26000,'2024-01-21');
+
+/* TASK-2 */
+-- 1
+insert into Students (student_id,first_name,last_name,date_of_birth,email,phone_number) 
+values(11,'John','Doe','1995-08-15','john.doe@example.com','1234567890');
+
+-- 2
+insert into Enrollments values(111,06,'stat','2024-01-25');
+
+
+-- 3
+update Teacher set email='kanchikumari@gmail.com' where first_name='kumari';
+
+
+-- 4
+delete from Enrollments where student_id=01 and course_id='chm';
+
+-- 5
+update Courses set teacher_id='203' where course_id='chm';
+
+-- 6
+delete from Enrollments where student_id='03';
+delete from Payments where student_id='03';
+delete from Students where student_id='03';
+Select * from Students;
+
+-- 7
+update Payments set amount='29000' where student_id=6;
+
+-- TASK-3
+
+-- 1
+SELECT s.student_id,s.first_name,s.last_name,s.date_of_birth,s.email, sum(p.amount) 
+from Students s left join Payments p on s.student_id=p.student_id where p.student_id=2;
+
+-- 2
+
+select c.course_name,count(e.student_id) as no_of_students 
+from Courses c left join Enrollments e on c.course_id=e.course_id group by c.course_name;
+
+-- 3
+select s.student_id,s.first_name,s.last_name from Students s left join
+Enrollments e on s.student_id=e.student_id where e.student_id is null;  
+
+-- 4
+select s.first_name,s.last_name,c.course_name from Students s left join
+Enrollments e on s.student_id=e.student_id join Courses c on e.course_id=c.course_id;
+
+-- 5
+select t.first_name,t.last_name,c.course_name from Teacher t left join 
+Courses c on t.teacher_id=c.teacher_id;
+
+-- 6
+select s.first_name,s.last_name,e.enrollment_date from Students s left join 
+Enrollments e on s.student_id=e.student_id join Courses c on e.course_id=c.course_id; 
+
+-- 7
+select s.student_id,s.first_name,s.last_name from Students s left join Payments p 
+on s.student_id=p.student_id where p.amount is null;
+
+-- 8
+select c.course_name from Courses c left join Enrollments e on c.course_id=e.course_id 
+where e.student_id is null;
+
+-- 9
+select e1.student_id from Enrollments e1 join Enrollments e2 on e1.student_id=e2.student_id
+where e1.course_id<>e2.course_id;
+
+-- 10
+select t.teacher_id,t.first_name,t.last_name from Teacher t left join Courses c 
+on t.teacher_id=c.teacher_id where c.teacher_id is null;
+
+
+-- TASK-4
+-- 1
+select c.course_id,c.course_name, avg(e.student_id) as enrolled_AVG from Courses c 
+ join Enrollments e on c.course_id=e.course_id group by e.Course_id;
+-- 2 
+ select s.student_id,s.first_name,s.last_name,p.amount as max_amount 
+ from Students s join Payments p on s.student_id=p.student_id 
+ where p.amount=(select max(amount) from Payments );
+-- 3
+select c.course_id,c.course_name,count(e.enrollment_id) as enrollcount from Courses c join Enrollments e on c.course_id=e.course_id
+group by c.course_id,c.course_name having count(e.enrollment_id)=
+(select max(enrollcount) from
+(select course_id,count(enrollment_id) as enrollcount from Enrollments group by course_id) as maxenrollments);
+-- 4
+select t.teacher_id, t.first_name,t.last_name,(select sum(p.amount)from Payments p join 
+Enrollments e on p.student_id=e.student_id join Courses c on e.course_id=c.course_id
+where c.teacher_id=t.teacher_id) as total_payment from Teacher t;
+-- 5
+select s.student_id,s.first_name,s.last_name from Students s where 
+(select count(distinct course_id) from Courses)=(select count(distinct course_id)from Enrollments
+e where e.student_id=s.student_id);
+-- 6
+select t.teacher_id,t.first_name,t.last_name from Teacher t where t.teacher_id not in 
+(select distinct c.teacher_id from Courses c where c.teacher_id is not null);
+-- 7
+select avg(student_age) as average_age from (select datediff(curdate(),date_of_birth)/365 
+as student_age from Students) as student_age;
+-- 8
+select course_id,course_name from Courses where course_id not in(select distinct course_id 
+from Enrollments );
+-- 9
+select e.student_id,s.first_name,s.last_name,e.course_id,c.course_name,
+(select sum(p.amount) from Payments p where p.student_id=e.student_id
+)as total_payments
+from Enrollments e join Students s on e.student_id=s.student_id
+join Courses c on e.course_id=c.course_id;
+-- 10
+
+select s.student_id,s.first_name,s.last_name from Students s where s.student_id =
+(select p.student_id   from Payments p group by student_id having
+count( student_id)>1);
+-- 11
+select s.student_id,s.first_name,s.last_name ,count(s.student_id) as total_no_of_payments from
+Students s join Payments p on s.student_id=p.student_id group by s.student_id;
+-- 12
+select c.course_id,c.course_name,count(e.student_id) as no_of_students_enrolled 
+from Courses c join Enrollments e on c.course_id=e.course_id group by c.course_id;
+-- 13
+select s.student_id,s.first_name,s.last_name,avg(p.amount) as avg_payment from Students s 
+join Payments p on s.student_id=p.student_id group by s.student_id;
